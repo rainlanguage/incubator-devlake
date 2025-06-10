@@ -15,9 +15,6 @@
 
         devShells.default = pkgs.mkShell {
           nativeBuildInputs = [ pkgs.go pkgs.gopls ];
-          shellHook = ''
-            export PATH=${pkgs.go}/bin:$PATH
-          '';
         };
       });
 }
