@@ -35,6 +35,7 @@ type GithubOptions struct {
 	Name          string                    `json:"name"  mapstructure:"name,omitempty"`
 	FullName      string                    `json:"fullName"  mapstructure:"fullName,omitempty"`
 	ScopeConfig   *models.GithubScopeConfig `mapstructure:"scopeConfig,omitempty" json:"scopeConfig"`
+	ProjectNumber *int                      `json:"projectNumber" mapstructure:"projectNumber,omitempty"`
 }
 
 type GithubTaskData struct {

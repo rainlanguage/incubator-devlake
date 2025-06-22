@@ -22,6 +22,7 @@ import feishu from './feishu';
 import general from './general';
 import gitextractor from './gitextractor';
 import github from './github';
+import github_project from './githubproject';
 import gitlab from './gitlab';
 import jenkins from './jenkins';
 import jira from './jira';
@@ -50,6 +51,11 @@ export const EXAMPLE_CONFIG = [
     id: 'github',
     name: 'Load GitHub Configuration',
     config: github,
+  },
+  {
+    id: 'github-project',
+    name: 'Load GitHub Project/Board (aka GitHub ProjectV2) Configuration',
+    config: github_project,
   },
   {
     id: 'gitlab',

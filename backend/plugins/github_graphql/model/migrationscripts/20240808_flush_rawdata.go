@@ -38,6 +38,7 @@ func (*flushRawData) Up(basicRes context.BasicRes) errors.Error {
 		"_raw_github_graphql_jobs",
 		"_raw_github_graphql_prs",
 		"_raw_github_graphql_release",
+		"_raw_github_graphql_projects",
 	)
 	return nil
 }
