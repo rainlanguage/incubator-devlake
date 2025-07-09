@@ -62,6 +62,12 @@ func ExtractJobs(taskCtx plugin.SubTaskContext) errors.Error {
 				if err != nil {
 					taskCtx.GetLogger().Error(err, `Marshal checkRun.Steps.Nodes fail and ignore`)
 				}
+
+				// Skip jobs with no started_at value (workaround for https://github.com/apache/incubator-devlake/issues/8442)
+				if checkRun.StartedAt != nil && (checkRun.StartedAt.IsZero() || checkRun.StartedAt.Year() < 1980) {
+					continue
+				}
+
 				githubJob := &models.GithubJob{
 					ConnectionId: data.Options.ConnectionId,
 					RunID:        checkSuite.CheckSuite.WorkflowRun.DatabaseId,

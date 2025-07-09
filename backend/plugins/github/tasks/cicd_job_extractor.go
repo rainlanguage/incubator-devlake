@@ -62,6 +62,11 @@ func ExtractJobs(taskCtx plugin.SubTaskContext) errors.Error {
 				return nil, err
 			}
 
+			// Skip jobs with no started_at value (workaround for https://github.com/apache/incubator-devlake/issues/8442)
+			if githubJob.StartedAt != nil && (githubJob.StartedAt.IsZero() || githubJob.StartedAt.Year() < 1980) {
+				return make([]interface{}, 0, 1), nil
+			}
+
 			results := make([]interface{}, 0, 1)
 			githubJobResult := &models.GithubJob{
 				ConnectionId:  data.Options.ConnectionId,
