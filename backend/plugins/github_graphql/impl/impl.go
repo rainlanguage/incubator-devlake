@@ -140,6 +140,10 @@ func (p GithubGraphql) SubTaskMetas() []plugin.SubTaskMeta {
 		tasks.CollectReleaseMeta,
 		tasks.ExtractReleasesMeta,
 		githubTasks.ConvertReleasesMeta,
+
+		// github projects
+		tasks.CollectProjectsMeta,
+		tasks.ExtractProjectsMeta,
 	}
 }
 
@@ -175,9 +179,11 @@ func (p GithubGraphql) PrepareTaskData(taskCtx plugin.TaskContext, options map[s
 		return nil, errors.Default.Wrap(err, "unable to get github API client instance")
 	}
 
-	err = githubImpl.EnrichOptions(taskCtx, &op, apiClient.ApiClient)
-	if err != nil {
-		return nil, err
+	if op.ProjectNumber == nil {
+		err = githubImpl.EnrichOptions(taskCtx, &op, apiClient.ApiClient)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	tokens := strings.Split(connection.Token, ",")
@@ -243,14 +249,16 @@ func (p GithubGraphql) PrepareTaskData(taskCtx plugin.TaskContext, options map[s
 	})
 
 	regexEnricher := helper.NewRegexEnricher()
-	if err = regexEnricher.TryAdd(devops.DEPLOYMENT, op.ScopeConfig.DeploymentPattern); err != nil {
-		return nil, errors.BadInput.Wrap(err, "invalid value for `deploymentPattern`")
-	}
-	if err = regexEnricher.TryAdd(devops.PRODUCTION, op.ScopeConfig.ProductionPattern); err != nil {
-		return nil, errors.BadInput.Wrap(err, "invalid value for `productionPattern`")
-	}
-	if err = regexEnricher.TryAdd(devops.ENV_NAME_PATTERN, op.ScopeConfig.EnvNamePattern); err != nil {
-		return nil, errors.BadInput.Wrap(err, "invalid value for `envNamePattern`")
+	if op.ProjectNumber == nil {
+		if err = regexEnricher.TryAdd(devops.DEPLOYMENT, op.ScopeConfig.DeploymentPattern); err != nil {
+			return nil, errors.BadInput.Wrap(err, "invalid value for `deploymentPattern`")
+		}
+		if err = regexEnricher.TryAdd(devops.PRODUCTION, op.ScopeConfig.ProductionPattern); err != nil {
+			return nil, errors.BadInput.Wrap(err, "invalid value for `productionPattern`")
+		}
+		if err = regexEnricher.TryAdd(devops.ENV_NAME_PATTERN, op.ScopeConfig.EnvNamePattern); err != nil {
+			return nil, errors.BadInput.Wrap(err, "invalid value for `envNamePattern`")
+		}
 	}
 
 	taskData := &githubTasks.GithubTaskData{
